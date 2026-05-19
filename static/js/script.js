@@ -1,0 +1,1 @@
+//JavaScript code needs to be written here and connected to index file.
