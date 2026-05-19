@@ -1,11 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fake News Detection</title>
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" >
 </head>
 <body>
-    <h1>Fake News Detection System</h1>
+
+    <div class="container">
+        
+        <h1>Fake News <br><span>Detection System</span></h1>
+
+
+        <!-- Input Section -->
+        <div class="input-section">
+
+            <textarea 
+                id="newsInput"
+                placeholder="Enter news article or headline here..."
+            ></textarea>
+
+            <button id="predictBtn">Predict</button>
+
+        </div>
+
+        <!-- Result Section -->
+        <div class="result-container">
+
+            <!-- Classification Result -->
+            <div class="result-box">
+                <h3>Classification Result</h3>
+                <p id="classification">Waiting for prediction...</p>
+            </div>
+
+            <!-- Confidence Score -->
+            <div class="result-box">
+                <h3>Confidence Score</h3>
+                <p id="confidence">--</p>
+            </div>
+
+            <!-- Reasoning -->
+            <div class="result-box">
+                <h3>Reasoning</h3>
+                <p id="reasoning">
+                    The explanation from the model will appear here.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+
+   <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+
 </body>
 </html>

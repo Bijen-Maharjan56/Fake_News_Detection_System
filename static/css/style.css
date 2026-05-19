@@ -1,1 +1,118 @@
-/* css code needs to be written here and should be connected to index file */
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f7fb;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Main Container */
+.container {
+    width: 100%;
+    max-width: 900px;
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Heading */
+h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #24374a;
+}
+span{
+    color:#5b8def;
+}
+
+/* Input Section */
+.input-section {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+/* Textarea */
+textarea {
+    flex: 1;
+    height: 120px;
+    padding: 15px;
+    border: 1px solid #cfd8dc;
+    border-radius: 8px;
+    resize: none;
+    font-size: 16px;
+    outline: none;
+    background-color: #f9fbfc;
+}
+
+/* Predict Button */
+button {
+    width: 100px;
+    height:50px;
+    border: none;
+    border-radius: 8px;
+    background-color: #5b8def;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition:all 0.4s ease;
+    align-self:center;
+}
+
+button:hover {
+    background-color: #4a7de0;
+    transform:translateY(-5px);
+    box-shadow:0px 8px 15px rgba(0, 0, 0, 0.15);
+   
+}
+
+/* Result Container */
+.result-container {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Result Box */
+.result-box {
+    background-color: #f9fbfc;
+    border-left: 5px solid #5b8def;
+    padding: 18px;
+    border-radius: 8px;
+}
+
+/* Result Titles */
+.result-box h3 {
+    margin-bottom: 10px;
+    color: #34495e;
+}
+
+/* Result Text */
+.result-box p {
+    color: #555;
+    line-height: 1.5;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+
+    .input-section {
+        flex-direction: column;
+    }
+
+    button {
+        width: 100%;
+        height: 50px;
+    }
+}
