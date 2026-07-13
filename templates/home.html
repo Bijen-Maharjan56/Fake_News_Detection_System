@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Political Fake News Detection</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/news.png') }}">
+    
+    <link rel="stylesheet" href="{{url_for('static', filename='css/home.css')}}">
+
+   
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+</head>
+<body>
+
+<!-- Hero -->
+<section class="hero">
+
+    <div class="hero-text">
+
+        <h1>
+            Political <span>Fake News</span><br>
+            Detection System
+        </h1>
+
+        <p>
+            Detect potentially misleading political news using Artificial
+            Intelligence and Machine Learning.
+        </p>
+
+        <div class="buttons">
+            <a href="{{ url_for('predict_page') }}" class="primary-btn">
+                Start Detection
+            </a>
+
+            <a href="#about" class="secondary-btn">
+                Learn More
+            </a>
+        </div>
+
+    </div>
+
+    <div class="hero-image">
+        <i class="fa-solid fa-newspaper"></i>
+        <i class="fa-solid fa-shield"></i>
+        <i class="fa-solid fa-robot"></i>
+    </div>
+
+</section>
+
+
+<!-- Features -->
+
+<section class="features">
+
+    <div class="card">
+
+        <i class="fa-solid fa-robot"></i>
+
+        <h3>AI Prediction</h3>
+
+        <p>
+            Uses Machine Learning models to identify patterns commonly found
+            in fake and real political news.
+        </p>
+
+    </div>
+
+    <div class="card">
+
+        <i class="fa-solid fa-bolt"></i>
+
+        <h3>Instant Analysis</h3>
+
+        <p>
+            Analyze news articles in just a few seconds with an easy-to-use
+            interface.
+        </p>
+
+    </div>
+
+    <div class="card">
+
+        <i class="fa-solid fa-shield-halved"></i>
+
+        <h3>Promotes Awareness</h3>
+
+        <p>
+            Encourages users to think critically before believing or sharing
+            political news.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- About -->
+
+<section class="about" id="about">
+
+    <h2>Why This System?</h2>
+
+    <p>
+
+        Political misinformation spreads rapidly through social media and
+        online platforms. This system assists users by analyzing the textual
+        patterns of political news articles, helping them make more informed
+        decisions before sharing information.
+
+    </p>
+
+</section>
+
+
+<!-- Disclaimer -->
+
+<section class="disclaimer">
+
+    <i class="fa-solid fa-circle-exclamation"></i>
+
+    <div>
+
+        <h3>Disclaimer</h3>
+
+        <p>
+
+            Predictions are generated from machine learning patterns learned
+            during training. They should not be considered factual
+            verification or a replacement for professional fact-checking.
+            Always verify important information using trusted news sources.
+
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- CTA -->
+
+<section class="cta">
+
+    <h2>Ready to Detect Political Fake News?</h2>
+
+    <a href="{{url_for('predict_page')}}" class="primary-btn">
+        Start Detecting
+    </a>
+
+</section>
+
+</body>
+</html>

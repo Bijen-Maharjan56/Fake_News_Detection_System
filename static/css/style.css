@@ -43,6 +43,28 @@ span{
     margin-bottom: 25px;
 }
 
+/* Disclaimer Box */
+.disclaimer-box {
+    margin-top: 25px;
+    padding: 20px;
+    background: #fffaf0;
+    border-left: 5px solid #f4a100;
+    border-radius: 10px;
+}
+
+.disclaimer-box h3 {
+    color: #c97a00;
+    margin-bottom: 12px;
+    font-size: 18px;
+}
+
+.disclaimer-box p {
+    color: #555;
+    line-height: 1.7;
+    font-size: 15px;
+    text-align: justify;
+}
+
 /* Textarea */
 textarea {
     flex: 1;

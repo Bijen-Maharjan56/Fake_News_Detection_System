@@ -1,5 +1,3 @@
-//Connects your HTML button to the Flask 
-
 //Select elements from HTML
 const predictionBtn = document.getElementById("predictBtn");
 const newsInput = document.getElementById("newsInput");
@@ -15,8 +13,6 @@ const errorText = document.getElementById("errorText");
 
 //Button Click Event
 predictionBtn.addEventListener("click", async () => {
-    //async makes this function able to use await
-    //await pauses execution until Flask responds
 
     //Step 1: Read user input
     const newsText = newsInput.value.trim();

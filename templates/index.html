@@ -4,6 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fake News Detection</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/news.png') }}"
+    >
+
 
     <!-- External CSS -->
     <link
@@ -13,17 +16,28 @@
   </head>
   <body>
     <div class="container">
-      <h1>Fake News <br /><span>Detection System</span></h1>
+      <h1>Political Fake News <br /><span>Detection System</span></h1>
 
       <!-- Input Section -->
       <div class="input-section">
         <textarea
           id="newsInput"
-          placeholder="Enter news article or headline here..."
+          placeholder="Enter news article..."
         ></textarea>
 
         <button id="predictBtn">Predict</button>
       </div>
+      <!-- Disclaimer -->
+<div class="disclaimer-box">
+  <h3>⚠ Disclaimer</h3>
+  <p>
+    This system predicts whether a political news article is likely to be
+    <strong>Fake</strong> or <strong>Real</strong> using a machine learning
+    model trained on historical data. Predictions are based on learned
+    linguistic patterns and probabilities, <strong>not on factual verification</strong>.
+   
+  </p>
+</div><br>
 
       <!-- Result Section -->
       <div class="result-container" id="resultContainer">
