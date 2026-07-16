@@ -1,11 +1,12 @@
+#Using Multinomial Naive Bayes
+
 import re
 import numpy as np
 import pandas as pd
 import os
 
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.svm import LinearSVC
-from sklearn.calibration import CalibratedClassifierCV
+from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import FeatureUnion
 from sklearn.metrics import (
     accuracy_score, precision_score, recall_score,
@@ -120,16 +121,15 @@ def train():
     X_train_feat = combined.fit_transform(X_train_raw)
     X_test_feat  = combined.transform(X_test_raw)
 
-    # Calibrated LinearSVC 
-    # LinearSVC generalizes better than LogisticRegression for text
-    # CalibratedClassifierCV gives honest probability scores 
-    base_clf = LinearSVC(C=0.5, max_iter=2000, random_state=42)
-    clf      = CalibratedClassifierCV(base_clf, cv=3)
+    # -------------------------
+    # Multinomial Naive Bayes
+    # -------------------------
+    clf = MultinomialNB(alpha=0.1)
     clf.fit(X_train_feat, Y_train)
 
     model = {
         'combined': combined,
-        'clf':      clf
+        'clf': clf
     }
 
     # Evaluate (first run only) 
@@ -153,7 +153,7 @@ def train():
                     yticklabels=["FAKE", "REAL"])
         plt.xlabel("Predicted Label")
         plt.ylabel("Actual Label")
-        plt.title("Confusion Matrix — LinearSVC + TF-IDF (final_dataset.csv)")
+        plt.title("Confusion Matrix — Multinomial Naive Bayes + TF-IDF")
         plt.tight_layout()
         plt.savefig("static/images/confusion_matrix.png", dpi=150)
         plt.close()
@@ -168,41 +168,57 @@ def train():
 
 #  Prediction
 def predict(news: str) -> dict:
+
     cleaned = clean_text(news)
 
     combined = model['combined']
-    clf      = model['clf']
+    clf = model['clf']
 
     user_word_tfidf = word_vectorizer.transform([cleaned])
 
     if user_word_tfidf.nnz == 0:
-        return {'error': 'No recognizable words found. Please enter more content.'}
+        return {
+            'error': 'No recognizable words found. Please enter more content.'
+        }
 
     user_features = combined.transform([cleaned])
 
     prediction = clf.predict(user_features)[0]
-    prob       = clf.predict_proba(user_features)[0]
 
-    # Cap at 95% — honest confidence instead of inflated 99%
-    confidence = min(round(float(np.max(prob)) * 100, 2), 95.0)
-    label      = "REAL" if prediction == 1 else "FAKE"
+    probabilities = clf.predict_proba(user_features)[0]
 
-    # Top influential words
+    confidence = round(float(np.max(probabilities)) * 100, 2)
+
+    label = "REAL" if prediction == 1 else "FAKE"
+
     feature_names = word_vectorizer.get_feature_names_out()
-    weights       = clf.calibrated_classifiers_[0].estimator.coef_[0]
-    indices       = user_word_tfidf.nonzero()[1]
+
+    log_probs = clf.feature_log_prob_
+
+    indices = user_word_tfidf.nonzero()[1]
 
     word_contributions = []
-    for i in indices:
-        contribution = float(user_word_tfidf[0, i] * weights[i])
-        word_contributions.append({'word': feature_names[i], 'score': round(contribution, 4)})
+
+    for idx in indices:
+
+        score = float(
+            user_word_tfidf[0, idx] *
+            (log_probs[1][idx] - log_probs[0][idx])
+        )
+
+        word_contributions.append({
+            'word': feature_names[idx],
+            'score': round(score, 4)
+        })
 
     word_contributions = sorted(
-        word_contributions, key=lambda x: abs(x['score']), reverse=True
+        word_contributions,
+        key=lambda x: abs(x['score']),
+        reverse=True
     )[:5]
 
     return {
         'prediction': label,
         'confidence': confidence,
-        'top_words':  word_contributions
+        'top_words': word_contributions
     }
