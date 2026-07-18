@@ -43,11 +43,11 @@ def build_text(row) -> str:
     has_body = int(row.get('has_body', 0))
 
     if source == 'SyntheticNepaliFactCheck':
-        # Use title only — body contains contradictory denial language
+        # Use title only
         return title
 
     if has_body == 1 and body and body.lower() != 'nan':
-        # Full article: title + body (NOT content, which already includes title)
+        # Full article: title + body 
         return title + " " + body
     else:
         # No body available: fall back to content (already combined in dataset)
@@ -87,9 +87,7 @@ def train():
     print(f"  After label flip → train REAL: {(Y_train==1).sum()}, FAKE: {(Y_train==0).sum()}")
 
     # Word-level TF-IDF
-    # sublinear_tf reduces dominance of very frequent words
-    # ngram_range captures short meaningful phrases
-    # min_df/max_df filters noise (rare typos and super-common words)
+   
     word_vectorizer = TfidfVectorizer(
         stop_words='english',
         ngram_range=(1, 2),
@@ -101,8 +99,6 @@ def train():
     )
 
     # Character-level TF-IDF 
-    # Captures writing style (punctuation density, suffixes, phrasing patterns)
-    # Useful because fake vs real news often differ in style, not just vocabulary
     char_vectorizer = TfidfVectorizer(
         analyzer='char_wb',
         ngram_range=(3, 5),

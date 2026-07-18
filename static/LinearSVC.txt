@@ -12,3 +12,5 @@ First run — evaluating on held-out test split...
     accuracy                           0.89      4331
    macro avg       0.89      0.89      0.89      4331
 weighted avg       0.89      0.89      0.89      4331
+
+StratifiedCV - 
