@@ -12,3 +12,20 @@ First run — evaluating on held-out test split...
     accuracy                           0.89      4331
    macro avg       0.89      0.89      0.89      4331
 weighted avg       0.89      0.89      0.89      4331
+
+
+Updated
+First run — evaluating on held-out test split...
+  Accuracy : 0.8901
+  Precision: 0.8810
+  Recall   : 0.8952
+  F1 Score : 0.8880
+
+              precision    recall  f1-score   support
+
+        FAKE       0.90      0.89      0.89      2223
+        REAL       0.88      0.90      0.89      2108
+
+    accuracy                           0.89      4331
+   macro avg       0.89      0.89      0.89      4331
+weighted avg       0.89      0.89      0.89      4331

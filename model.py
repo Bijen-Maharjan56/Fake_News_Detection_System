@@ -23,6 +23,18 @@ model           = None
 FLAG_FILE       = "trained.flag"
 
 DATASET_PATH    = "datasets/final_dataset.csv"
+# Political keywords used to identify political news
+POLITICAL_KEYWORDS = [
+    "government", "minister", "prime minister", "president",
+    "parliament", "election", "vote", "cabinet",
+    "constitution", "politician", "party", "campaign",
+    "policy", "law", "supreme court", "speaker",
+    "province", "federal", "mayor", "ward",
+    "congress", "communist", "maoist", "uml",
+    "nc", "rpp", "parliamentary", "governmental",
+    "ministry", "commission", "governor", "opposition",
+    "coalition", "democracy"
+]
 
 # Text cleaning 
 def clean_text(text: str) -> str:
@@ -52,6 +64,18 @@ def build_text(row) -> str:
     else:
         # No body available: fall back to content (already combined in dataset)
         return str(row.get('content', '')).strip()
+
+def is_political(text: str) -> bool:
+    text = clean_text(text)
+
+    matches = 0
+
+    for keyword in POLITICAL_KEYWORDS:
+        if keyword in text:
+            matches += 1
+
+    # Require at least 3 political keywords
+    return matches >= 3
 
 #  Training 
 def train():
@@ -91,24 +115,24 @@ def train():
     # ngram_range captures short meaningful phrases
     # min_df/max_df filters noise (rare typos and super-common words)
     word_vectorizer = TfidfVectorizer(
-        stop_words='english',
-        ngram_range=(1, 2),
-        max_features=80_000,
-        sublinear_tf=True,
-        min_df=3,
-        max_df=0.90,
-        analyzer='word'
+    analyzer='word',
+    stop_words='english',
+    ngram_range=(1, 3),
+    max_features=120000,
+    min_df=2,
+    max_df=0.85,
+    sublinear_tf=True
     )
 
     # Character-level TF-IDF 
     # Captures writing style (punctuation density, suffixes, phrasing patterns)
     # Useful because fake vs real news often differ in style, not just vocabulary
     char_vectorizer = TfidfVectorizer(
-        analyzer='char_wb',
-        ngram_range=(3, 5),
-        max_features=40_000,
-        sublinear_tf=True,
-        min_df=5
+    analyzer='char_wb',
+    ngram_range=(3, 6),
+    max_features=60000,
+    min_df=2,
+    sublinear_tf=True
     )
 
     combined = FeatureUnion([
@@ -121,10 +145,13 @@ def train():
     X_test_feat  = combined.transform(X_test_raw)
 
     # Calibrated LinearSVC 
-    # LinearSVC generalizes better than LogisticRegression for text
-    # CalibratedClassifierCV gives honest probability scores 
-    base_clf = LinearSVC(C=0.5, max_iter=2000, random_state=42)
-    clf      = CalibratedClassifierCV(base_clf, cv=3)
+    base_clf = LinearSVC(
+    C=1.0,
+    class_weight='balanced',
+    max_iter=5000,
+    random_state=42
+    )
+    clf = CalibratedClassifierCV(estimator=base_clf, method='sigmoid', cv=5 )
     clf.fit(X_train_feat, Y_train)
 
     model = {
@@ -170,6 +197,12 @@ def train():
 def predict(news: str) -> dict:
     cleaned = clean_text(news)
 
+    # Check whether the news is political
+    if not is_political(cleaned):
+        return {
+            "error": "This system only detects political news."
+        }
+
     combined = model['combined']
     clf      = model['clf']
 
@@ -183,8 +216,17 @@ def predict(news: str) -> dict:
     prediction = clf.predict(user_features)[0]
     prob       = clf.predict_proba(user_features)[0]
 
+    confidence = float(np.max(prob))
+
+    if confidence < 0.60:
+        return {
+            "prediction": "UNCERTAIN",
+            "confidence": round(confidence * 100, 2),
+            "reason": "The model is not confident enough to classify this news."
+        }
+
     # Cap at 95% — honest confidence instead of inflated 99%
-    confidence = min(round(float(np.max(prob)) * 100, 2), 95.0)
+    confidence = round(confidence * 100, 2)
     label      = "REAL" if prediction == 1 else "FAKE"
 
     # Top influential words
