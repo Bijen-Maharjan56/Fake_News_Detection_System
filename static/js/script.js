@@ -63,7 +63,7 @@ predictionBtn.addEventListener("click", async () => {
     confidenceEl.parentElement.style.display = "block";
     reasoningEl.parentElement.style.display = "block";
     errorBox.style.display = "none";
-    
+
     if (data.prediction === "FAKE") {
       classificationEl.textContent = "FAKE NEWS";
       classificationBox.classList.add("fake");
@@ -76,16 +76,17 @@ predictionBtn.addEventListener("click", async () => {
 
     //Step 10: Fill Reasoning box
     reasoningEl.innerHTML = "";
-    //Clear previous word list first
 
     data.top_words.forEach((item) => {
       const li = document.createElement("li");
+
       const direction =
         item.score > 0
-          ? '<span class="direction">-> supports REAL </span>'
-          : '<span class="direction">-> supports FAKE</span>';
+          ? '<span class="direction">→ supports REAL</span>'
+          : '<span class="direction">→ supports FAKE</span>';
 
       li.innerHTML = `<b>${item.word}</b>: ${item.score} ${direction}`;
+
       reasoningEl.appendChild(li);
     });
 
@@ -93,7 +94,9 @@ predictionBtn.addEventListener("click", async () => {
     resultContainer.style.display = "flex";
   } catch (error) {
     //Runs if Flask server is completely unreachable
-    showError("Cannot connect to server. Make sure app.py is running.");
+    console.error(error);
+
+    showError("An unexpected error occurred while processing the prediction.");
     console.error("Fetch error:", error);
   } finally {
     loader.style.display = "none";

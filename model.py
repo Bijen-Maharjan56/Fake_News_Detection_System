@@ -33,7 +33,8 @@ POLITICAL_KEYWORDS = [
     "congress", "communist", "maoist", "uml",
     "nc", "rpp", "parliamentary", "governmental",
     "ministry", "commission", "governor", "opposition",
-    "coalition", "democracy"
+    "coalition", "democracy", "rsp", "balen", "sudan gurung", "rabi lamechane", "sunita dongol",
+    "protest", "disputes", "harka sampang"
 ]
 
 # Text cleaning 
@@ -42,7 +43,7 @@ def clean_text(text: str) -> str:
     text = re.sub(r'https?://\S+|www\.\S+', '', text)  # remove URLs
     text = re.sub(r'\[.*?\]', '', text)                 # remove [tags]
     text = re.sub(r'<.*?>', '', text)                   # remove HTML
-    text = re.sub(r'\d+', '', text)                     # remove digits
+    # text = re.sub(r'\d+', '', text)                     # remove digits
     text = re.sub(r'[^\w\s]', ' ', text)                # punctuation → space
     text = re.sub(r'\s+', ' ', text).strip()            # collapse whitespace
     return text
@@ -71,11 +72,12 @@ def is_political(text: str) -> bool:
     matches = 0
 
     for keyword in POLITICAL_KEYWORDS:
-        if keyword in text:
+        pattern = r"\b" + re.escape(keyword) + r"\b"
+        if re.search(pattern, text):
             matches += 1
 
-    # Require at least 3 political keywords
-    return matches >= 3
+    # Require at least 2 political keywords
+    return matches >= 2
 
 #  Training 
 def train():
@@ -116,13 +118,13 @@ def train():
     # min_df/max_df filters noise (rare typos and super-common words)
     word_vectorizer = TfidfVectorizer(
     analyzer='word',
-    stop_words='english',
-    ngram_range=(1, 3),
+    stop_words=None,
+    ngram_range=(1,3),
     max_features=120000,
     min_df=2,
     max_df=0.85,
     sublinear_tf=True
-    )
+)
 
     # Character-level TF-IDF 
     # Captures writing style (punctuation density, suffixes, phrasing patterns)
@@ -214,20 +216,17 @@ def predict(news: str) -> dict:
     user_features = combined.transform([cleaned])
 
     prediction = clf.predict(user_features)[0]
-    prob       = clf.predict_proba(user_features)[0]
+    prob = clf.predict_proba(user_features)[0]
 
-    confidence = float(np.max(prob))
+    confidence = round(float(np.max(prob)) * 100, 2)
 
-    if confidence < 0.60:
-        return {
-            "prediction": "UNCERTAIN",
-            "confidence": round(confidence * 100, 2),
-            "reason": "The model is not confident enough to classify this news."
-        }
+    print("Prediction:", prediction)
+    print("Probabilities:", prob)
+    print("Confidence:", confidence)
 
     # Cap at 95% — honest confidence instead of inflated 99%
-    confidence = round(confidence * 100, 2)
-    label      = "REAL" if prediction == 1 else "FAKE"
+    
+    label = "REAL" if prediction == 1 else "FAKE"
 
     # Top influential words
     feature_names = word_vectorizer.get_feature_names_out()
