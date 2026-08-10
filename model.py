@@ -7,10 +7,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.svm import LinearSVC
 from sklearn.calibration import CalibratedClassifierCV
 from sklearn.pipeline import FeatureUnion
-from sklearn.metrics import (
-    accuracy_score, precision_score, recall_score,
-    f1_score, confusion_matrix, classification_report
-)
+from sklearn.metrics import (accuracy_score, precision_score, recall_score,
+    f1_score, confusion_matrix, classification_report)
 
 import seaborn as sns
 import matplotlib
@@ -56,14 +54,14 @@ def build_text(row) -> str:
     has_body = int(row.get('has_body', 0))
 
     if source == 'SyntheticNepaliFactCheck':
-        # Use title only — body contains contradictory denial language
+        # Use title only, body contains contradictory denial language
         return title
 
     if has_body == 1 and body and body.lower() != 'nan':
-        # Full article: title + body (NOT content, which already includes title)
+        # Full article: title + body 
         return title + " " + body
     else:
-        # No body available: fall back to content (already combined in dataset)
+        
         return str(row.get('content', '')).strip()
 
 def is_political(text: str) -> bool:
@@ -113,9 +111,7 @@ def train():
     print(f"  After label flip → train REAL: {(Y_train==1).sum()}, FAKE: {(Y_train==0).sum()}")
 
     # Word-level TF-IDF
-    # sublinear_tf reduces dominance of very frequent words
-    # ngram_range captures short meaningful phrases
-    # min_df/max_df filters noise (rare typos and super-common words)
+   
     word_vectorizer = TfidfVectorizer(
     analyzer='word',
     stop_words=None,
@@ -161,7 +157,7 @@ def train():
         'clf':      clf
     }
 
-    # Evaluate (first run only) 
+    # Evaluate (onr time run only) 
     first_time = not os.path.exists(FLAG_FILE)
     if first_time:
         print("\nFirst run — evaluating on held-out test split...")
@@ -224,7 +220,7 @@ def predict(news: str) -> dict:
     print("Probabilities:", prob)
     print("Confidence:", confidence)
 
-    # Cap at 95% — honest confidence instead of inflated 99%
+    # Cap at 95% honest confidence instead of inflated 99%
     
     label = "REAL" if prediction == 1 else "FAKE"
 
