@@ -6,7 +6,7 @@ app = Flask(__name__)
 CORS(app)
 
 
-model.train() #calls train() in model.py
+model.load_model()
 
 #Route 1: Serve the HTML Page
 @app.route('/')

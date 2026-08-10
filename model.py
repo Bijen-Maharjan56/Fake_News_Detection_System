@@ -2,6 +2,7 @@ import re
 import numpy as np
 import pandas as pd
 import os
+import joblib
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.svm import LinearSVC
@@ -190,6 +191,11 @@ def train():
         print("  Already trained. Delete trained.flag to force re-evaluation.")
 
     print("Model ready.")
+    # Save trained objects
+    joblib.dump(model, "model.pkl")
+    joblib.dump(word_vectorizer, "word_vectorizer.pkl")
+
+    print("Model saved successfully.")
 
 #  Prediction
 def predict(news: str) -> dict:
@@ -243,3 +249,12 @@ def predict(news: str) -> dict:
         'confidence': confidence,
         'top_words':  word_contributions
     }
+
+def load_model():
+    global model
+    global word_vectorizer
+
+    model = joblib.load("model.pkl")
+    word_vectorizer = joblib.load("word_vectorizer.pkl")
+
+    print("Saved model loaded.")
